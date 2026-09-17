@@ -1,4 +1,4 @@
-pyrogram==2.0.106
+pyrofork
 pyromod==1.5
 tgcrypto
 aiohttp
@@ -9,7 +9,6 @@ cloudscraper
 pycryptodome
 pytz
 motor
-pyrofork
 PyJWT
 aiogram
 beautifulsoup4

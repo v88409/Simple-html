@@ -18,5 +18,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy your code
 COPY . .
 
-# Run the Extractor module
-CMD ["sh", "-c", "gunicorn app:app -b 0.0.0.0:8000 & python3 -m Extractor"]
+# Run via the supervisor -- keeps both the web health-check server and
+# the bot running, and forwards shutdown signals cleanly to both.
+CMD ["python3", "run.py"]

@@ -1,54 +1,76 @@
 #!/usr/bin/env python3
+"""
+Supervisor script: runs app.py (Flask health-check server) and
+Extractor (the Pyrogram bot) as subprocesses, and forwards
+SIGTERM/SIGINT to both, so a platform's restart/redeploy/health-check
+signal reaches the bot process cleanly instead of only killing the
+parent shell.
+
+This replaces the previous DYNO-based branching, which only ran the
+bot (never the web server) on Heroku -- breaking any platform that
+requires a bound port for health checks (Render, Heroku web dyno,
+Koyeb, etc). Both processes now always run together, everywhere.
+"""
+
 import os
-from dotenv import load_dotenv
+import signal
 import subprocess
 import sys
+import time
 
-def run_app():
-    try:
-        # This assumes you have an app.py in your project root.
-        subprocess.run([sys.executable, "app.py"], check=True)
-    except subprocess.CalledProcessError as e:
-        print(f"Web app process error: {e}")
-        sys.exit(1)
+from dotenv import load_dotenv
 
-def run_bot():
-    try:
-        # Ensure sessions directory exists
-        os.makedirs("sessions", exist_ok=True)
-        
-        # Launch the pyrogram/pyromod bot
-        subprocess.run([sys.executable, "-m", "Extractor"], check=True)
-    except subprocess.CalledProcessError as e:
-        print(f"Bot process error: {e}")
-        sys.exit(1)
-    except Exception as e:
-        print(f"Unexpected error in bot process: {e}")
-        sys.exit(1)
+load_dotenv()  # no-op if a real environment (Render/Heroku/etc) already set vars
 
-if __name__ == "__main__":
-    # 1) Load .env locally; on Heroku this is a no-op since env vars are already set
-    load_dotenv()
+# Verify required credentials are present before spawning anything --
+# config.py itself exits with a clear message if something's missing,
+# so this import is the validation step.
+import config  # noqa: F401
 
-    # 2) Verify we have the creds we need
-    from config import API_ID, API_HASH, BOT_TOKEN
-    if not all([API_ID, API_HASH, BOT_TOKEN]):
-        sys.exit("⚠️  Missing API_ID, API_HASH, or BOT_TOKEN in the environment")
+procs = []
 
-    # 3) Check if running on Heroku
-    if os.environ.get('DYNO'):
-        # On Heroku, just run the bot
-        run_bot()
-    else:
-        # Locally, run both processes
-        import multiprocessing
-        procs = [
-            multiprocessing.Process(target=run_app, name="web_app"),
-            multiprocessing.Process(target=run_bot, name="telegram_bot"),
-        ]
+
+def start():
+    os.makedirs("sessions", exist_ok=True)
+    procs.append(subprocess.Popen([sys.executable, "app.py"]))
+    procs.append(subprocess.Popen([sys.executable, "-m", "Extractor"]))
+
+
+def handle_signal(signum, frame):
+    print(f"Supervisor received signal {signum}, forwarding to children...")
+    for p in procs:
+        if p.poll() is None:
+            try:
+                p.send_signal(signum)
+            except Exception as e:
+                print(f"Error signaling process {p.pid}: {e}")
+    for p in procs:
+        try:
+            p.wait(timeout=15)
+        except subprocess.TimeoutExpired:
+            print(f"Process {p.pid} did not exit in time, killing.")
+            p.kill()
+    sys.exit(0)
+
+
+signal.signal(signal.SIGTERM, handle_signal)
+signal.signal(signal.SIGINT, handle_signal)
+
+start()
+
+# Monitor: if either process dies unexpectedly, bring the whole
+# supervisor down so the host platform notices and restarts cleanly,
+# rather than limping along with only one half of the app running.
+try:
+    while True:
+        time.sleep(2)
         for p in procs:
-            p.start()
-
-        # Wait for them (if one dies, we'll exit too)
-        for p in procs:
-            p.join()
+            ret = p.poll()
+            if ret is not None:
+                print(f"Process {p.pid} exited with code {ret}, shutting down supervisor.")
+                for other in procs:
+                    if other is not p and other.poll() is None:
+                        other.terminate()
+                sys.exit(ret or 1)
+except KeyboardInterrupt:
+    handle_signal(signal.SIGINT, None)

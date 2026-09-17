@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: itsgolu-extractor
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: API_ID
+        sync: false
+      - key: API_HASH
+        sync: false
+      - key: BOT_TOKEN
+        sync: false
+      - key: BOT_USERNAME
+        sync: false
+      - key: OWNER_ID
+        sync: false
+      - key: SUDO_USERS
+        sync: false
+      - key: CHANNEL_ID
+        sync: false
+      - key: CHANNEL_ID2
+        sync: false
+      - key: MONGO_URL
+        sync: false
+      - key: PREMIUM_LOGS
+        sync: false
+      - key: THUMB_URL
+        value: https://i.ibb.co/DPCmWSKV/1000003297-3.png

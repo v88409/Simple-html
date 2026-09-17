@@ -1,28 +1,50 @@
 import os
+import sys
 from os import getenv
 
 
+def _require_int(name: str) -> int:
+    """Reads a required integer environment variable, exiting with a clear
+    error message instead of a cryptic ValueError if it's missing/invalid."""
+    raw = os.environ.get(name, "").strip()
+    if not raw:
+        sys.exit(f"❌ {name} is missing — set it in your environment variables.")
+    try:
+        return int(raw)
+    except ValueError:
+        sys.exit(f"❌ {name} must be a number, got: {raw!r}")
+
+
+def _require_str(name: str) -> str:
+    raw = os.environ.get(name, "").strip()
+    if not raw:
+        sys.exit(f"❌ {name} is missing — set it in your environment variables.")
+    return raw
+
+
 # ------------------------------------------------
-API_ID = int(os.environ.get("API_ID", ""))
+API_ID = _require_int("API_ID")
 # ------------------------------------------------
-API_HASH = os.environ.get("API_HASH","")
+API_HASH = _require_str("API_HASH")
 # ------------------------------------------------
-BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
+BOT_TOKEN = _require_str("BOT_TOKEN")
 # ------------------------------------------------
-BOT_USERNAME = os.environ.get("BOT_USERNAME", "")
+BOT_USERNAME = _require_str("BOT_USERNAME")
 BOT_TEXT = ":𝐈𝐓'𝐬𝐆𝐎𝐋𝐔.™®:"
 # ------------------------------------------------
-OWNER_ID = int(os.environ.get("OWNER_ID", ""))
+OWNER_ID = _require_int("OWNER_ID")
 # ------------------------------------------------
-# //LOG CHANNEL ID 
-CHANNEL_ID = int(os.environ.get("CHANNEL_ID", ""))
+SUDO_USERS = list(map(int, getenv("SUDO_USERS", str(OWNER_ID)).split()))
+# ------------------------------------------------
+# //LOG CHANNEL ID
+CHANNEL_ID = _require_int("CHANNEL_ID")
 
 # //FORCE_CHANNEL_ID
-CHANNEL_ID2 = int(os.environ.get("CHANNEL_ID2", "")) 
+CHANNEL_ID2 = _require_int("CHANNEL_ID2")
 # ------------------------------------------------
-MONGO_URL = os.environ.get("MONGO_URL", "")
+MONGO_URL = _require_str("MONGO_URL")
 # -----------------------------------------------
-PREMIUM_LOGS = int(os.environ.get("PREMIUM_LOGS", ""))
+PREMIUM_LOGS = _require_int("PREMIUM_LOGS")
 # -----------------------------------------------
 join = '<a href="">✳️ JOIN BACKUP</a>'
 # -----------------------------------------------
@@ -30,22 +52,6 @@ UNSPLASH_ACCESS_KEY = 'RabDRmuXXBobanmwwbvpP5LwoG4J8ox34y5Sstz-9jk'
 # -----------------------------------------------
 UNSPLASH_QUERY = 'animal baby'
 # -----------------------------------------------
-ADMIN_BOT_USERNAME = "" #without @
+ADMIN_BOT_USERNAME = ""  # without @
 
 THUMB_URL = os.environ.get("THUMB_URL", "https://i.ibb.co/DPCmWSKV/1000003297-3.png")
-
-
-
-
-# # Bot configuration
-# API_ID = int(os.environ.get("API_ID", "22746239"))
-# API_HASH = os.environ.get("API_HASH", "a98ec8cfd8572a3a7c936cf828fe6215")
-# BOT_TOKEN = os.environ.get("BOT_TOKEN", "7547829346:AAGyfvOu47EciNhC7NUGSDEDFuBaetYYusw")
-# BOT_USERNAME = os.environ.get("BOT_USERNAME", "MassRPBot")
-# OWNER_ID = int(os.environ.get("OWNER_ID", "7463601722"))
-# SUDO_USERS = list(map(int, getenv("SUDO_USERS", "7463601722").split()))
-# CHANNEL_ID = int(os.environ.get("CHANNEL_ID", "-1002601604234"))
-# MONGO_URL = os.environ.get("MONGO_URL", "mongodb+srv://wadiro6523:08AwfhhKRdQaS1i6@cluster0.krzxuop.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-# PREMIUM_LOGS = int(os.environ.get("PREMIUM_LOGS", "-1002601604234"))
-# THUMB_URL = os.environ.get("THUMB_URL", "https://i.fbcd.co/products/original/ug-circle-logo-design-2-e84695ca2ab9a697d2b2d7c928b0bf5f12bf18e076da241815e0372c8d617915.jpg")
-
