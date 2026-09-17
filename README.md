@@ -6,7 +6,7 @@
 ![License](https://img.shields.io/badge/License-See%20LICENSE-lightgrey)
 ![Status](https://img.shields.io/badge/Status-Active-brightgreen)
 
-A Telegram bot that extracts course content (videos, PDFs, links) from **20+ educational platforms and apps** — Physics Wallah, Classplus, Career Will, Adda247, Utkarsh, KD Campus, MyPathshala, and multiple generations of AppX-based apps — plus a premium/subscription system and general-purpose utilities (URL encryption, text/HTML conversion).
+
 
 > 🚀 **This bot can be deployed on Render, Heroku, Koyeb, Railway, Google Cloud Run, Google Colab, VPS, and Termux.** See [Deployment](#-deployment).
 
@@ -27,22 +27,7 @@ A Telegram bot that extracts course content (videos, PDFs, links) from **20+ edu
 
 ---
 
-## 🔎 Overview
 
-Most extraction commands work the same way: send the command, then follow the bot's prompts (phone number, OTP, course ID, or a URL/API key, depending on the platform) — the bot handles login and content extraction interactively rather than needing everything in one message.
-
-Content is delivered as extracted links/files, with progress updates during longer extractions.
-
-## ✨ Features
-
-- 🎯 **Multi-platform course extraction** — one bot, many source platforms (see full list in [Commands Reference](#-commands-reference))
-- 🔁 **Multiple AppX API versions supported** — different AppX-based apps use different backend versions; this bot handles several (`v1`–`v4`) plus OTP-based login
-- 💎 **Premium/subscription system** — owner can grant, revoke, and check premium access per user
-- 🔐 **URL encryption utility** — encrypt/decrypt URLs inside `.txt` files with AES, independent of any extraction platform
-- 📢 **Owner broadcast tools** — message all users, forward to a channel, or post announcements
-- 📊 **Usage stats** — quick bot/user statistics for the owner
-- 🛠 **Owner debug tools** — live Python eval and shell access (⚠️ see [Security Notes](#️-security-notes))
-- 🧵 **Force-subscribe gate** — users must join a configured channel before using the bot
 
 ## 💬 Commands Reference
 
