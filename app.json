@@ -1,0 +1,68 @@
+{
+  "name": "ITsGOLU Extractor",
+  "description": "A Telegram bot for extracting course content from various educational apps/APIs (AppX, Classplus, Careerwill, etc).",
+  "repository": "https://github.com/Alex638796/ITsGOLU_EXTRACTOR",
+  "env": {
+    "API_ID": {
+      "description": "Your Telegram API ID, from my.telegram.org.",
+      "required": true
+    },
+    "API_HASH": {
+      "description": "Your Telegram API Hash, from my.telegram.org.",
+      "required": true
+    },
+    "BOT_TOKEN": {
+      "description": "Your Telegram Bot Token, from @BotFather.",
+      "required": true
+    },
+    "BOT_USERNAME": {
+      "description": "Your bot's username, without @.",
+      "required": true
+    },
+    "OWNER_ID": {
+      "description": "Your Telegram numeric user ID (get from @userinfobot). The bot's admin.",
+      "required": true
+    },
+    "SUDO_USERS": {
+      "description": "Space-separated list of additional admin user IDs. Defaults to just OWNER_ID if left empty.",
+      "required": false
+    },
+    "CHANNEL_ID": {
+      "description": "Log channel ID (bot must be admin there).",
+      "required": true
+    },
+    "CHANNEL_ID2": {
+      "description": "Force-subscribe channel ID (bot must be admin there).",
+      "required": true
+    },
+    "MONGO_URL": {
+      "description": "Your MongoDB connection string (e.g. from MongoDB Atlas free tier).",
+      "required": true
+    },
+    "PREMIUM_LOGS": {
+      "description": "Channel/chat ID used for premium-related logs.",
+      "required": true
+    },
+    "THUMB_URL": {
+      "description": "Default thumbnail image URL.",
+      "value": "https://i.ibb.co/DPCmWSKV/1000003297-3.png",
+      "required": false
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "free"
+    }
+  },
+  "stack": "heroku-24",
+  "addons": [],
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    },
+    {
+      "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git"
+    }
+  ]
+}
